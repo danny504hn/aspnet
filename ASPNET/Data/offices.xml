@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <database name="miniatures">
+        <!-- Tabla offices -->
+        <table name="offices">
+            <column name="officeCode">1</column>
+            <column name="city">San Francisco</column>
+            <column name="phone">+1 650 219 4782</column>
+            <column name="addressLine1">100 Market Street</column>
+            <column name="addressLine2">Suite 300</column>
+            <column name="state">CA</column>
+            <column name="country">USA</column>
+            <column name="postalCode">94080</column>
+            <column name="territory">NA</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">2</column>
+            <column name="city">Boston</column>
+            <column name="phone">+1 215 837 0825</column>
+            <column name="addressLine1">1550 Court Place</column>
+            <column name="addressLine2">Suite 102</column>
+            <column name="state">MA</column>
+            <column name="country">USA</column>
+            <column name="postalCode">02107</column>
+            <column name="territory">NA</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">3</column>
+            <column name="city">NYC</column>
+            <column name="phone">+1 212 555 3000</column>
+            <column name="addressLine1">523 East 53rd Street</column>
+            <column name="addressLine2">apt. 5A</column>
+            <column name="state">NY</column>
+            <column name="country">USA</column>
+            <column name="postalCode">10022</column>
+            <column name="territory">NA</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">4</column>
+            <column name="city">Paris</column>
+            <column name="phone">+33 14 723 4404</column>
+            <column name="addressLine1">43 Rue Jouffroy D&#039;abbans</column>
+            <column name="addressLine2">NULL</column>
+            <column name="state">NULL</column>
+            <column name="country">France</column>
+            <column name="postalCode">75017</column>
+            <column name="territory">EMEA</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">5</column>
+            <column name="city">Tokyo</column>
+            <column name="phone">+81 33 224 5000</column>
+            <column name="addressLine1">4-1 Kioicho</column>
+            <column name="addressLine2">NULL</column>
+            <column name="state">Chiyoda-Ku</column>
+            <column name="country">Japan</column>
+            <column name="postalCode">102-8578</column>
+            <column name="territory">Japan</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">6</column>
+            <column name="city">Sydney</column>
+            <column name="phone">+61 2 9264 2451</column>
+            <column name="addressLine1">5-11 Wentworth Avenue</column>
+            <column name="addressLine2">Floor #2</column>
+            <column name="state">NULL</column>
+            <column name="country">Australia</column>
+            <column name="postalCode">NSW 2010</column>
+            <column name="territory">APAC</column>
+        </table>
+        <table name="offices">
+            <column name="officeCode">7</column>
+            <column name="city">London</column>
+            <column name="phone">+44 20 7877 2041</column>
+            <column name="addressLine1">25 Old Broad Street</column>
+            <column name="addressLine2">Level 7</column>
+            <column name="state">NULL</column>
+            <column name="country">UK</column>
+            <column name="postalCode">EC2N 1HN</column>
+            <column name="territory">EMEA</column>
+        </table>
+    </database>
