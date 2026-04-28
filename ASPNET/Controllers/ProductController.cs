@@ -1,10 +1,7 @@
 ﻿using ASPNET.Interfaces;
 using ASPNET.Model;
 using Microsoft.AspNetCore.Mvc;
-using ASPNET.Interfaces;
-using ASPNET.Model;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+
 
 namespace ASPNET.Controllers
 {
@@ -24,8 +21,8 @@ namespace ASPNET.Controllers
         {
 
             var productes = repository.GetAll(productLineId);
-            if (!productes.Any()) return NotFound(new List<Product>()); //Potser la list buida es aixi o hi ha alguna otra manera pero transformar productes en empty
-            else return Ok(productes);
+            
+            return Ok(productes);
         }
 
         [HttpGet("{productCode}")] //Perque al swagger demana product code e id?
@@ -37,9 +34,9 @@ namespace ASPNET.Controllers
 
         [HttpGet("{productCode}/preu")]
 
-        public IActionResult GetPrice(string productCode) { 
+        public IActionResult GetPrice(string productCode) {
             decimal price = repository.GetPrice(productCode);
-            if(price < 0) { return NotFound(price); }
+            if (price < 0) { return NotFound(price); }
             else return Ok(price);
         }
 
@@ -48,8 +45,7 @@ namespace ASPNET.Controllers
         public IActionResult GetOrders(string productCode)
         {
             List<int> orders = repository.GetOrders(productCode);
-            if (!orders.Any()) { return NotFound(new List<int>()); }
-            else return Ok(orders);
+            return Ok(orders); ;
 
         }
 
@@ -59,18 +55,35 @@ namespace ASPNET.Controllers
             return Created();
         }
 
-        [HttpPut]
-        public IActionResult UpdateStock(String productCode, int increment)
+        [HttpPut("{productCode}/stock")]
+        public IActionResult UpdateStock(string productCode, int increment)
         {
-            repository.UpdateStock(productCode, increment);
-            return Ok(); 
+            try
+            {
+                repository.UpdateStock(productCode, increment);
+                return Ok(repository.GetOne(productCode));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPut]
-        public IActionResult UpdatePrice(String productCode, int increment)
+
+        [HttpPut("{productCode}/price")]
+        public IActionResult UpdatePrice(string productCode, decimal newPrice)
         {
-            repository.UpdatePrice(productCode, increment);
-            return Ok();
+            try
+            {
+                repository.UpdatePrice(productCode, newPrice);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+               
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

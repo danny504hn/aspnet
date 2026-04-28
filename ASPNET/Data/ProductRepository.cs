@@ -1,7 +1,6 @@
 ﻿using ASPNET.Interfaces;
 using ASPNET.Model;
 using MySql.Data.MySqlClient;
-using System.Reflection.PortableExecutable;
 
 namespace ASPNET.Data
 {
@@ -9,16 +8,17 @@ namespace ASPNET.Data
     {
 
         private readonly DBConnectionFactory connectionFactory;
-        private readonly ProductLineRepository pLRepository;
+        private readonly IProductLineRepository pLRepository;
 
-        public ProductRepository(DBConnectionFactory connectionFactory)
+        public ProductRepository(DBConnectionFactory connectionFactory, IProductLineRepository pL)
         {
             this.connectionFactory = connectionFactory;
-            this.pLRepository = new ProductLineRepository(connectionFactory);
+            this.pLRepository = pL;
         }
         public void Add(Product product)
         {
-            if (pLRepository.GetOne(product.ProductLine.ProductLineId) == null) {
+            if (pLRepository.GetOne(product.ProductLine.ProductLineId) == null)
+            {
                 ProductLine newProductLine = new ProductLine
                 {
                     ProductLineId = product.ProductLine.ProductLineId,
@@ -32,13 +32,13 @@ namespace ASPNET.Data
                                             (ProductCode, ProductName, ProductLine, ProductScale, ProductVendor, 
                                             ProductDescription, QuantityInStock, BuyPrice, MSRP) 
                                             VALUES 
-                                            (@code, @name, @line, @scale, @vendor, @description, @stock, @price, @msrp)",conn);
-            
+                                            (@code, @name, @line, @scale, @vendor, @description, @stock, @price, @msrp)", conn);
+
             cmd.Parameters.AddWithValue("@code", product.ProductCode);
             cmd.Parameters.AddWithValue("@name", product.ProductName);
 
-         
-            cmd.Parameters.AddWithValue("@line", product.ProductLine.ProductLineId );
+
+            cmd.Parameters.AddWithValue("@line", product.ProductLine.ProductLineId);
 
             cmd.Parameters.AddWithValue("@scale", product.ProductScale);
             cmd.Parameters.AddWithValue("@vendor", product.ProductVendor);
@@ -52,15 +52,16 @@ namespace ASPNET.Data
 
         public List<Product> GetAll(string productLineId)
         {
-         using var conn = GetConn();
+            using var conn = GetConn();
             var list = new List<Product>();
             using var cmd = new MySqlCommand(@"SELECT p.*, pl.textDescription FROM products p 
                                                INNER JOIN productlines pl 
                                                ON p.productLine = pl.productLine
-                                               WHERE p.productLine = @productLineId",conn);
+                                               WHERE p.productLine = @productLineId", conn);
             cmd.Parameters.AddWithValue("@productLineId", productLineId);
             var reader = cmd.ExecuteReader();
-            while (reader.Read()) {
+            while (reader.Read())
+            {
                 list.Add(
                     new Product
                     {
@@ -93,7 +94,8 @@ namespace ASPNET.Data
             cmd.Parameters.AddWithValue("@productCode", productCode);
 
             var reader = cmd.ExecuteReader();
-            if (reader.HasRows && reader.Read()) {
+            if (reader.HasRows && reader.Read())
+            {
                 product = new Product
                 {
                     ProductCode = reader.GetString("productCode"),
@@ -134,10 +136,8 @@ namespace ASPNET.Data
         {
             decimal price = -1;
             using var conn = GetConn();
-            using var cmd = new MySqlCommand(@"SELECT p.*, pl.textDescription FROM products p 
-                                               INNER JOIN productlines pl 
-                                               ON p.productLine = pl.productLine
-                                               WHERE p.productCode = @productCode", conn);
+            using var cmd = new MySqlCommand(@"SELECT buyPrice FROM products 
+                                               WHERE productCode = @productCode", conn);
             cmd.Parameters.AddWithValue("@productCode", productCode);
             var reader = cmd.ExecuteReader();
 
@@ -151,10 +151,14 @@ namespace ASPNET.Data
 
         public void UpdatePrice(string productCode, decimal newPrice)
         {
+            Product p = GetOne(productCode);
+            if (p == null) throw new Exception("El product es null");
+            if(newPrice <= 0) throw new Exception("El preu no pot ser negatiu");
+            
             using var conn = GetConn();
 
-            using var cmd = new MySqlCommand(@"UPDATE produtcs
-                                               SET buyPrice = @newPrice
+            using var cmd = new MySqlCommand(@"UPDATE products
+                                               SET buyPrice = @increment
                                                WHERE productCode = @productCode", conn);
 
             if (newPrice <= 0) throw new Exception();
@@ -166,13 +170,16 @@ namespace ASPNET.Data
 
         public void UpdateStock(string productCode, int increment)
         {
+            Product p = GetOne(productCode);
+            if (p == null) throw new Exception("El product es null");
+            if (increment <= 0) throw new Exception("El increment no pot ser negatiu");
             using var conn = GetConn();
 
-            using var cmd = new MySqlCommand(@"UPDATE produtcs
-                                               SET quantityinStock = qunatityinStock + @increment
-                                               WHERE productCode = @productCode",conn);
+            using var cmd = new MySqlCommand(@"UPDATE products
+                                               SET quantityinStock = quantityinStock + @increment
+                                               WHERE productCode = @productCode", conn);
+
             
-            if (increment <= 0) throw new Exception();
 
             cmd.Parameters.AddWithValue("@increment", increment);
             cmd.Parameters.AddWithValue("@productCode", productCode);

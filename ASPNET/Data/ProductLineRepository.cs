@@ -19,7 +19,7 @@ namespace ASPNET.Data
         {
             using var conn = GetConn();
 
-            var cmd = new MySqlCommand(
+            using var cmd = new MySqlCommand(
                 @"INSERT INTO PRODUCTLINES (productLine, TextDescription)
                     VALUES (@pl,@td)", conn);
 
@@ -62,7 +62,7 @@ namespace ASPNET.Data
             var list = new List<ProductLine>();
             using var conn = GetConn();
             var cmd = new MySqlCommand("SELECT * FROM PRODUCTLINES WHERE TEXTDESCRIPTION LIKE @subTextDescription", conn);
-            cmd.Parameters.AddWithValue("@subTextDescription","% " + subTextDescription + " %");
+            cmd.Parameters.AddWithValue("@subTextDescription","%" + subTextDescription + "%");
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -100,15 +100,20 @@ namespace ASPNET.Data
         {
             using var conn = GetConn();
 
-            var cmd = new MySqlCommand(@"
+            using var cmd = new MySqlCommand(@"
                     UPDATE PRODUCTLINES    
-                    SET TEXTDESCRIPTION = @newTextDescription
-                    where productLine = @id
-                    ",conn);
+                    SET TEXTDESCRIPTION = @newTextDescription,
+                        HTMLDESCRIPTION = @htmlDescription,
+                        IMAGE = @image
+                    WHERE productLine = @id", conn);
+            
             cmd.Parameters.AddWithValue("@newTextDescription", productLine.TextDescription);
+            cmd.Parameters.AddWithValue("@htmlDescription", (object?)productLine.HtmlDescription ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@image", (object?)productLine.Image ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@id", productLine.ProductLineId);
             cmd.ExecuteNonQuery();
-           
+
+
         }
 
         private MySqlConnection GetConn()

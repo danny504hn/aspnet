@@ -10,7 +10,7 @@
 
         public string AddresLineOne { get; set; }
 
-        public string AddresLineTwo { get; set; }
+        public string? AddresLineTwo { get; set; }
 
         public string? State { get; set; }
 

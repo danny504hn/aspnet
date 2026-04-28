@@ -19,8 +19,8 @@ namespace ASPNET.Controllers
         public IActionResult GetAll()
         {
             var productLines = repository.GetAll();
-            if(!productLines.Any()) return NotFound();
-            else return Ok(productLines);
+            return Ok(productLines);
+
         }
 
         [HttpGet("{id}")]
@@ -30,11 +30,12 @@ namespace ASPNET.Controllers
             else return Ok(productline);
         }
 
-        [HttpGet("/substring")]
+        [HttpGet("substring")]
         public IActionResult GetFromDescription(string subTextDescription) {
+
             List<ProductLine> productlines = repository.GetFromDescription(subTextDescription);
-            if (!productlines.Any()) return NotFound();
-            else return Ok(productlines);
+            return Ok(productlines);
+
 
         }
 
@@ -60,8 +61,12 @@ namespace ASPNET.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
+            ProductLine pl = repository.GetOne(id);
+            if (pl == null) return NotFound();
+
             repository.Delete(id);
             return Ok();
+
         }
 
 

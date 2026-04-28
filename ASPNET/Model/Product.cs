@@ -5,7 +5,7 @@
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
 
-        public ProductLine ProductLine { get; set; }
+        public ProductLine? ProductLine { get; set; }
 
         public string ProductScale { get; set; }
 
